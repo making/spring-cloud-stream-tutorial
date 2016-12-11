@@ -119,7 +119,7 @@ spring.cloud.stream.bindings.output.contentType=application/json
 ./mvnw clean package -DskipTests=true
 ```
 
-`target`ディレクトリに`hello-source-0.0.1-SNAPSHOT.jar`が
+`target`ディレクトリに`hello-source-0.0.1-SNAPSHOT.jar`ができていることを確認してください。
 
 ```
 $ ls -lh target/
