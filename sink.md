@@ -19,7 +19,7 @@ curl start.spring.io/starter.tgz \
 > **【ノート】 Web UIからのプロジェクト作成**
 >
 > `curl`によるプロジェクト作成がうまくいかない場合は[Spring Initializr](https://start.spring.io)にアクセスして、
-> 次の項目を入力し、"Generate Project"ボタンをクリックしてください。`hello-source.zip`がダウンロードされるので、これを展開してください。
+> 次の項目を入力し、"Generate Project"ボタンをクリックしてください。`hello-sink.zip`がダウンロードされるので、これを展開してください。
 > 
 > * Artifact: hello-sink
 > * Search for dependecies: Web, Actuator, Stream Rabbit
