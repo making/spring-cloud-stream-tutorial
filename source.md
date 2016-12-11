@@ -545,6 +545,17 @@ $ cf push
 
 Spring Cloud Streamにはテスト支援機能も用意されています。テスト時はMessage Binderのインメモリ実装が使われるようになります。これにより、開発中はMessage Binder(RabbitMQ)を用意しなくてもテストを進めることができます。
 
+`pom.xml`に次の依存関係を追加して下さい。
+
+``` xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream-test-support</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+
 `src/test/java/com/example/HelloSourceApplicationTests.java`に次の内容を記述してください。
 
 ``` java
