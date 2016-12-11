@@ -81,7 +81,7 @@ spring.cloud.stream.bindings.output.destination=hello
 spring.cloud.stream.bindings.output.contentType=application/json
 ```
 
-> **【ノート】 デフォルトchane名の`output`**
+> **【ノート】 デフォルトchannel名の`output`**
 > 
 > ここでchanel名は`output`になっていますが、この値はSpring Cloud Streamが用意している`Source`クラスに定義されています。
 > 
