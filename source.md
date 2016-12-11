@@ -173,7 +173,7 @@ java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192
 > spring.rabbitmq.password=pass
 > ```
 
-
+以下のコマンドで、メッセージを送信してください。
 ```
 curl -v localhost:8080 -d '{"text":"Hello"}' -H 'Content-Type: application/json'
 ```
