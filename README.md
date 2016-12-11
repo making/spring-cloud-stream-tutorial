@@ -1,4 +1,4 @@
-# spring-cloud-stream-tutorial
+# Spring Cloud Stream Tutorial
 
 本チュートリアルでは、簡単なSourceとSinkを作成して、Spring Cloud Streamの基本的な開発方法を学びます。
 
