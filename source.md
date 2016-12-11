@@ -246,7 +246,7 @@ applications:
 
 `tmaki`の部分は一意になるように自分のアカウント名などに置換してください。また、商用版Pivotal Cloud Foundryを使用する場合は`java_buildpack`の代わりに`java_buildpack_offline`を使用してください。
 
-`rabbit-binder`サービスは後ほど作成します。
+`rabbit-binder`サービスインスタンスは後ほど作成します。
 
 次の3種類の環境でそれぞれ使い方を紹介します。違いはRabbitMQサービスインスタンスの作り方だけです。
 
