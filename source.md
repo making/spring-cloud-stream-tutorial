@@ -609,7 +609,7 @@ public class HelloSourceApplicationTests {
 
 次のようにテストが通ればOKです。
 
-```
+``` console
 $ ./mvnw test
 [INFO] Scanning for projects...
 [INFO]                                                                         
