@@ -163,6 +163,27 @@ RabbitMQのExchangeとQueueが結びつくことで、SourceとSinkがつなが�
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/c3d7b31b-6a81-bd9d-db06-3abdae4ffd94.png)
 
+Sink側のアプリケーションをCtrl+Cで止めてください。その後、Sourceに次のメッセージを送信してください。
+
+```
+curl -v localhost:8080 -d '{"text":"Hello2"}' -H 'Content-Type: application/json'
+```
+
+次のコマンドで再度Sinkアプリケーションを起動してください。
+
+```
+java -jar target/hello-sink-0.0.1-SNAPSHOT.jar --server.port=8081
+```
+
+起動するや否や、次のログが出力されることを確認できるでしょう。
+
+```
+Received Hello2
+```
+
+Sinkが一度でも接続されていれば、Sourceにメッセージを書き込んだ段階でSinkがダウンしていてもSinkが復帰したタイミングでメッセージを受信することができます。
+これにより、書き込みに対するシステムの耐障害性を高くすることができます。
+
 ### Cloud Foundryにデプロイ
 
 次にここで作成したアプリケーションをCloud Foundryにデプロイします。
