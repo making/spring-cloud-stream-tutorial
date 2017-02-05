@@ -68,7 +68,7 @@ Received Hello3
 > ``` 
 
 
-#### Cloud Foundry上でスケールアウト
+### Cloud Foundry上でスケールアウト
 
 
 Cloud Foundry上のスケールアウトはとても簡単です。`cf scale -i <インスタンス数> <アプリケーション名>`でスケールアウト可能です。
