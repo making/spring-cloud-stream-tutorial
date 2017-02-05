@@ -11,10 +11,10 @@ Spring Cloud Streamに関する詳しい情報は
 [Event Driven Microservices with Spring Cloud Stream](http://www.slideshare.net/makingx/event-driven-microservices-with-spring-cloud-stream-jjugccc-ccca3)
 を参照してください。
 
-* [Sourceの作成](source.md)
-* [Sinkの作成](sink.md)
-* [Sinkのスケールアウト](scale-out.md)
-* [新しいSinkを追加](add-sink.md)
+1. [Sourceの作成](source.md)
+1. [Sinkの作成](sink.md)
+1. [Sinkのスケールアウト](scale-out.md)
+1. [新しいSinkを追加](add-sink.md)
 
 
 ### 利用規約
