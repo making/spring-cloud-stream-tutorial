@@ -171,6 +171,7 @@ java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192
 > spring.rabbitmq.addresses=192.168.99.100:5672
 > spring.rabbitmq.username=user
 > spring.rabbitmq.password=pass
+> spring.rabbitmq.virtual-host=... # if needed
 > ```
 
 以下のコマンドで、メッセージを送信してください。
