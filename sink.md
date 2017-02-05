@@ -128,7 +128,7 @@ drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 test-classes
 次のコマンドでアプリケーションを起動してください。
 
 ```
-java -jar target/hello-sink-0.0.1-SNAPSHOT.jar --server.port=8081
+java -jar target/hello-sink-0.0.1-SNAPSHOT.jar --server.port=8082
 ```
 
 RabbitMQに関する設定は[Sourceの作成#ローカル環境で実行](source.md#ローカル環境で実行)を参照して下さい。
@@ -172,7 +172,7 @@ curl -v localhost:8080 -d '{"text":"Hello2"}' -H 'Content-Type: application/json
 次のコマンドで再度Sinkアプリケーションを起動してください。
 
 ```
-java -jar target/hello-sink-0.0.1-SNAPSHOT.jar --server.port=8081
+java -jar target/hello-sink-0.0.1-SNAPSHOT.jar --server.port=8082
 ```
 
 起動するや否や、次のログが出力されることを確認できるでしょう。
