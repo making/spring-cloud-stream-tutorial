@@ -200,7 +200,7 @@ applications:
   - rabbitmq-binder
 ```
 
-`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。また、商用版Pivotal Cloud Foundryを使用する場合は`java_buildpack`の代わりに`java_buildpack_offline`を使用してください。`rabbitmq-binder`サービスインスタンスの作成方法は[Sourceの作成#Cloud Foundryにデプロイ](source.md#cloud-foundryにデプロイ)を参照してください。
+`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。また、商用版Pivotal Cloud Foundryを使用する場合は`java_buildpack`の代わりに`java_buildpack_offline`を使用してください。`rabbitmq-binder`サービスインスタンスをまだ作成していない場合は[Sourceの作成#Cloud Foundryにデプロイ](source.md#cloud-foundryにデプロイ)を参照してください。
 
 ```
 $ cf push
