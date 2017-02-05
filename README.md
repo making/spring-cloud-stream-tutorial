@@ -13,7 +13,7 @@ Spring Cloud Streamに関する詳しい情報は
 
 * [Sourceの作成](source.md)
 * [Sinkの作成](sink.md)
-* Sinkのスケールアウト (Coming Soon)
+* [Sinkのスケールアウト](scale-out.md)
 * 新しいSinkを追加 (Coming Soon)
 
 
