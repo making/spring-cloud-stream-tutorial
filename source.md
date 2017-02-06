@@ -179,6 +179,9 @@ java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192
 > spring.rabbitmq.password=pass
 > spring.rabbitmq.virtual-host=/ # if needed
 > ```
+>
+> CloudAMQPを利用する場合は「[[補足資料] CloudAMQPの利用](cloudamqp.md)」を参照してください。
+
 
 以下のコマンドで、メッセージを送信してください。
 ```
@@ -540,6 +543,8 @@ OSSのCloud Foundryをインストールした後などのRabbitMQが存在し�
 ```
 cf create-user-provided-service rabbitmq-binder -p '{"uri":"amqp://<username>:<password>@<hostname>/<vhost>"}'
 ```
+
+CloudAMQPを利用する場合は「[[補足資料] CloudAMQPの利用](cloudamqp.md)」を参照してください。
 
 `uri`にこの形式を指定することによりSpring Auto-ReconfigurationでSpring Cloud Connectorsを使ったRabbitMQへの自動接続が有効になります。有効条件についてはドキュメントを参照してください。後は`cf push`すれば良いです。
 
