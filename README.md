@@ -15,6 +15,7 @@ Spring Cloud Streamに関する詳しい情報は
 1. [Sinkの作成](sink.md)
 1. [Sinkのスケールアウト](scale-out.md)
 1. [新しいSinkを追加](add-sink.md)
+1. [[補足資料] CloudAMQPの利用](cloudamqp.md)
 
 
 ### 利用規約
