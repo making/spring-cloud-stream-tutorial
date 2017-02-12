@@ -10,7 +10,7 @@
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/ebd07f31-c909-6a9e-1856-b08b333155d4.png)
 
-インスタンス作成が面でNameを入力します。任意の値で良いです。Data Centerも選択できるものであればどこでも良いです。(Pivotal Web ServicesはUS-East-1 Regionにいるため、ここではUS-East-1を選択します)
+インスタンス作成画面でNameを入力します。任意の値で良いです。Data Centerも選択できるものであればどこでも良いです。(Pivotal Web ServicesはUS-East-1 Regionにいるため、ここではUS-East-1を選択します)
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/97ba6d8e-3b2f-105d-999a-bfbec51afd19.png)
 

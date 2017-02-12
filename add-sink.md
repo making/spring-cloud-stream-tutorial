@@ -156,7 +156,7 @@ applications:
 デプロイします。
 
 ```
-$ Lcf push
+$ cf push
 Using manifest file /Users/makit/git/tweet-viewer/manifest.yml
 
 Creating app tweet-viewer-tmaki in org APJ / space Development as tmaki@pivotal.io...
