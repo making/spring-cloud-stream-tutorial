@@ -237,6 +237,8 @@ curl -v localhost:8080 -d '{"text":"Hello"}' -H 'Content-Type: application/json'
 >   }
 > }
 > ```
+>
+> **Spring Boot 1.5からActuatorに対してデフォルトで認可制御が行われるようになりました。そのため、Spring Boot 1.5を使って本チュートリアルを実施する場合は、上記のレスポンスは`{"status":"UP"}`だけになります。Spring Boot 1.4以前と同じ結果にしたい場合は`management.security.enabled=false`を設定してください**
 
 ### Cloud Foundryにデプロイ
 
