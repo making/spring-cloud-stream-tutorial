@@ -278,6 +278,6 @@ Consumer Groupの仕組みを利用して、メッセージを受信するSink�
 
 連携するサービスが後から増えても、サービス呼び出し側（メッセージ送信側)のコードを変更することなくサービスを追加することができます。
 
-このような手法を[Choreography Style](https://www.thoughtworks.com/insights/blog/scaling-microservices-event-stream)と呼び、マイクロサービスアークテクチャを実現する上で重要なパターンとなります。
+このような手法を[Choreography Style](https://www.thoughtworks.com/insights/blog/scaling-microservices-event-stream)と呼び、マイクロサービスアーキテクチャを実現する上で重要なパターンとなります。
 
 Spring Cloud Streamを利用することでChoreography Styleを簡単に実現できます。

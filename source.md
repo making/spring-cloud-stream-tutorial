@@ -156,7 +156,7 @@ docker run -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 java -jar target/hello-source-0.0.1-SNAPSHOT.jar
 ```
 
-RabbitMQが別のサーバー上にいる場合は次のように`spring.rabbitmq.addresse`を指定してください。
+RabbitMQが別のサーバー上にいる場合は次のように`spring.rabbitmq.addresses`を指定してください。
 
 ```
 java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192.168.99.100:5672
