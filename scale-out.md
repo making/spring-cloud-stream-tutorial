@@ -103,7 +103,7 @@ curl hello-source-tmaki.cfapps.io -d '{"text":"Hello4"}' -H 'Content-Type: appli
 curl hello-source-tmaki.cfapps.io -d '{"text":"Hello5"}' -H 'Content-Type: application/json'
 ```
 
-次のようなログが出力されてでしょう。
+次のようなログが出力されたでしょう。
 
 ```
 2017-02-06T00:57:38.78+0900 [APP/PROC/WEB/0]OUT Received Hello1

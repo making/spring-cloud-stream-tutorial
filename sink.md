@@ -151,7 +151,7 @@ Received Hello
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/dd5fb790-b348-ee1e-44aa-040cd4ff78e6.png)
 
-`hello.printer` Queueをクリックして、Overviewを開いてください。この状態で再度リクエストを送ると、MessageがこのQueueに送られていることが見て取れます。またBindingsを見ると`hello`ExchangにこのQueueがバインドされていることもわかります。
+`hello.printer` Queueをクリックして、Overviewを開いてください。この状態で再度リクエストを送ると、MessageがこのQueueに送られていることが見て取れます。またBindingsを見ると`hello`ExchangeにこのQueueがバインドされていることもわかります。
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/17375bd3-fcad-3c2e-4f6f-1e662e288d19.png)
 
