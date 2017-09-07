@@ -11,6 +11,7 @@ Sinkアプリケーションを追加して、メッセージの受信先を動�
 curl start.spring.io/starter.tgz \
        -d artifactId=tweet-viewer \
        -d baseDir=tweet-viewer \
+       -d packageName=com.example \
        -d dependencies=web,actuator,cloud-stream-binder-rabbit \
        -d applicationName=TweetViewerApplication | tar -xzvf -
 ```
