@@ -13,6 +13,7 @@
 curl start.spring.io/starter.tgz \
        -d artifactId=hello-source \
        -d baseDir=hello-source \
+       -d packageName=com.example \
        -d dependencies=web,actuator,cloud-stream-binder-rabbit \
        -d applicationName=HelloSourceApplication | tar -xzvf -
 ```
