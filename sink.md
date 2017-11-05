@@ -195,7 +195,7 @@ Sinkが一度でも接続されていれば、Sourceにメッセージを書き�
 applications:
 - name: hello-sink-tmaki
   memory: 512m
-  buildpack: java_buildpack
+  buildpack: https://github.com/cloudfoundry/java-buildpack#v3.19
   path: target/hello-sink-0.0.1-SNAPSHOT.jar
   services:
   - rabbitmq-binder
