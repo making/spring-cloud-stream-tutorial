@@ -145,7 +145,7 @@ $ curl http://localhost:8085/
 applications:
 - name: tweet-viewer-tmaki
   memory: 512m
-  buildpack: java_buildpack
+  buildpack: https://github.com/cloudfoundry/java-buildpack#v3.19
   path: target/tweet-viewer-0.0.1-SNAPSHOT.jar
   services:
   - rabbitmq-binder
