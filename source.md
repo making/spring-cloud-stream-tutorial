@@ -256,7 +256,7 @@ curl -v localhost:8080 -d '{"text":"Hello"}' -H 'Content-Type: application/json'
 applications:
 - name: hello-source-tmaki
   memory: 512m
-  buildpack: java_buildpack
+  buildpack: https://github.com/cloudfoundry/java-buildpack#v3.19
   path: target/hello-source-0.0.1-SNAPSHOT.jar
   services:
   - rabbitmq-binder
