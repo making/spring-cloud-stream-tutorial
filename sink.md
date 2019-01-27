@@ -13,7 +13,7 @@ curl start.spring.io/starter.tgz \
        -d artifactId=hello-sink \
        -d baseDir=hello-sink \
        -d packageName=com.example \
-       -d dependencies=web,actuator,cloud-stream-binder-rabbit \
+       -d dependencies=web,actuator,cloud-stream,amqp \
        -d applicationName=HelloSinkApplication | tar -xzvf -
 ```
 
