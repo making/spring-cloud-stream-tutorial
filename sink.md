@@ -23,7 +23,7 @@ curl start.spring.io/starter.tgz \
 > 次の項目を入力し、"Generate Project"ボタンをクリックしてください。`hello-sink.zip`がダウンロードされるので、これを展開してください。
 > 
 > * Artifact: hello-sink
-> * Search for dependecies: Web, Actuator, Stream Rabbit
+> * Search for dependecies: Web, Actuator, Cloud Stream, RabbitMQ
 > 
 > ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/1ebaf1ab-824b-1637-ebee-94c24c596aee.png)
 
@@ -111,15 +111,15 @@ spring.cloud.stream.bindings.input.group=printer
 
 ```
 $ ls -lh target/
-total 38408
-drwxr-xr-x  4 makit  720748206   136B Dec 11 21:22 classes
-drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 generated-sources
-drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 generated-test-sources
--rw-r--r--  1 makit  720748206    19M Dec 11 21:22 hello-sink-0.0.1-SNAPSHOT.jar
--rw-r--r--  1 makit  720748206   3.7K Dec 11 21:22 hello-sink-0.0.1-SNAPSHOT.jar.original
-drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 maven-archiver
-drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 maven-status
-drwxr-xr-x  3 makit  720748206   102B Dec 11 21:22 test-classes
+total 49912
+drwxr-xr-x  4 maki  staff   128B  1 28 02:56 classes
+drwxr-xr-x  3 maki  staff    96B  1 28 02:56 generated-sources
+drwxr-xr-x  3 maki  staff    96B  1 28 02:56 generated-test-sources
+-rw-r--r--  1 maki  staff    24M  1 28 02:56 hello-sink-0.0.1-SNAPSHOT.jar
+-rw-r--r--  1 maki  staff   3.6K  1 28 02:56 hello-sink-0.0.1-SNAPSHOT.jar.original
+drwxr-xr-x  3 maki  staff    96B  1 28 02:56 maven-archiver
+drwxr-xr-x  3 maki  staff    96B  1 28 02:56 maven-status
+drwxr-xr-x  3 maki  staff    96B  1 28 02:56 test-classes
 ```
 
 
@@ -194,14 +194,13 @@ Sinkが一度でも接続されていれば、Sourceにメッセージを書き�
 ``` yml
 applications:
 - name: hello-sink-tmaki
-  memory: 512m
-  buildpack: https://github.com/cloudfoundry/java-buildpack#v3.19
+  memory: 768m
   path: target/hello-sink-0.0.1-SNAPSHOT.jar
   services:
   - rabbitmq-binder
 ```
 
-`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。また、商用版Pivotal Cloud Foundryを使用する場合は`java_buildpack`の代わりに`java_buildpack_offline`を使用してください。`rabbitmq-binder`サービスインスタンスをまだ作成していない場合は[Sourceの作成#Cloud Foundryにデプロイ](source.md#cloud-foundryにデプロイ)を参照してください。
+`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。`rabbitmq-binder`サービスインスタンスをまだ作成していない場合は[Sourceの作成#Cloud Foundryにデプロイ](source.md#cloud-foundryにデプロイ)を参照してください。
 
 ```
 $ cf push
@@ -296,17 +295,6 @@ $ cf logs hello-sink-tmaki --recent
 
 Spring Cloud Streamにはテスト支援機能も用意されています。テスト時はMessage Binderのインメモリ実装が使われるようになります。これにより、開発中はMessage Binder(RabbitMQ)を用意しなくてもテストを進めることができます。
 
-`pom.xml`に次の依存関係を追加して下さい。
-
-``` xml
-<dependency>
-    <groupId>org.springframework.cloud</groupId>
-    <artifactId>spring-cloud-stream-test-support</artifactId>
-    <scope>test</scope>
-</dependency>
-```
-
-
 `src/test/java/com/example/HelloSinkApplicationTests.java`に次の内容を記述してください。
 
 ``` java
@@ -353,89 +341,58 @@ public class HelloSinkApplicationTests {
 ``` console
 $ ./mvnw test
 [INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building demo 0.0.1-SNAPSHOT
-[INFO] ------------------------------------------------------------------------
 [INFO] 
-[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ hello-sink ---
+[INFO] -----------------------< com.example:hello-sink >-----------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ hello-sink ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
 [INFO] Copying 1 resource
 [INFO] Copying 0 resource
 [INFO] 
-[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ hello-sink ---
+[INFO] --- maven-compiler-plugin:3.8.0:compile (default-compile) @ hello-sink ---
 [INFO] Nothing to compile - all classes are up to date
 [INFO] 
-[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ hello-sink ---
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ hello-sink ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory /Users/makit/scst-ws/hello-sink/src/test/resources
+[INFO] skip non existing resourceDirectory /Users/maki/git/scst/hello-sink/src/test/resources
 [INFO] 
-[INFO] --- maven-compiler-plugin:3.1:testCompile (default-testCompile) @ hello-sink ---
+[INFO] --- maven-compiler-plugin:3.8.0:testCompile (default-testCompile) @ hello-sink ---
 [INFO] Nothing to compile - all classes are up to date
 [INFO] 
-[INFO] --- maven-surefire-plugin:2.18.1:test (default-test) @ hello-sink ---
-[INFO] Surefire report directory: /Users/makit/scst-ws/hello-sink/target/surefire-reports
-
--------------------------------------------------------
- T E S T S
--------------------------------------------------------
-23:35:16.304 [main] DEBUG org.springframework.test.context.junit4.SpringJUnit4ClassRunner - SpringJUnit4ClassRunner constructor called with [class com.example.HelloSinkApplicationTests]
-23:35:16.310 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-23:35:16.316 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-23:35:16.330 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.example.HelloSinkApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-23:35:16.340 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.example.HelloSinkApplicationTests], using SpringBootContextLoader
-23:35:16.343 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTests-context.xml] does not exist
-23:35:16.343 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTestsContext.groovy] does not exist
-23:35:16.343 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.example.HelloSinkApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
-23:35:16.344 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.example.HelloSinkApplicationTests]: HelloSinkApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-23:35:16.381 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.example.HelloSinkApplicationTests]
-23:35:16.438 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemProperties] PropertySource with lowest search precedence
-23:35:16.439 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemEnvironment] PropertySource with lowest search precedence
-23:35:16.439 [main] DEBUG org.springframework.core.env.StandardEnvironment - Initialized StandardEnvironment with PropertySources [systemProperties,systemEnvironment]
-23:35:16.455 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Resolved classpath location [com/example/] to resources [URL [file:/Users/makit/scst-ws/hello-sink/target/test-classes/com/example/], URL [file:/Users/makit/scst-ws/hello-sink/target/classes/com/example/]]
-23:35:16.456 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Looking for matching resources in directory tree [/Users/makit/scst-ws/hello-sink/target/test-classes/com/example]
-23:35:16.456 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Searching directory [/Users/makit/scst-ws/hello-sink/target/test-classes/com/example] for files matching pattern [/Users/makit/scst-ws/hello-sink/target/test-classes/com/example/*.class]
-23:35:16.459 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Looking for matching resources in directory tree [/Users/makit/scst-ws/hello-sink/target/classes/com/example]
-23:35:16.459 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Searching directory [/Users/makit/scst-ws/hello-sink/target/classes/com/example] for files matching pattern [/Users/makit/scst-ws/hello-sink/target/classes/com/example/*.class]
-23:35:16.460 [main] DEBUG org.springframework.core.io.support.PathMatchingResourcePatternResolver - Resolved location pattern [classpath*:com/example/*.class] to resources [file [/Users/makit/scst-ws/hello-sink/target/test-classes/com/example/HelloSinkApplicationTests.class], file [/Users/makit/scst-ws/hello-sink/target/classes/com/example/HelloSinkApplication$Tweet.class], file [/Users/makit/scst-ws/hello-sink/target/classes/com/example/HelloSinkApplication.class]]
-23:35:16.524 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/Users/makit/scst-ws/hello-sink/target/classes/com/example/HelloSinkApplication.class]
-23:35:16.525 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.example.HelloSinkApplication for test class com.example.HelloSinkApplicationTests
-23:35:16.527 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.example.HelloSinkApplicationTests]: using defaults.
-23:35:16.531 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
-23:35:16.550 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@fdefd3f, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@d83da2e, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@a4102b8, org.springframework.test.context.support.DirtiesContextTestExecutionListener@11dc3715, org.springframework.test.context.transaction.TransactionalTestExecutionListener@69930714, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@7a52f2a2, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@78047b92, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@8909f18, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@79ca92b9, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@1460a8c0, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@4f638935, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@4387b79e]
-23:35:16.554 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
-23:35:16.554 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
-Running com.example.HelloSinkApplicationTests
-23:35:16.557 [main] DEBUG org.springframework.test.context.junit4.SpringJUnit4ClassRunner - SpringJUnit4ClassRunner constructor called with [class com.example.HelloSinkApplicationTests]
-23:35:16.558 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-23:35:16.558 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-23:35:16.559 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.example.HelloSinkApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-23:35:16.560 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.example.HelloSinkApplicationTests], using SpringBootContextLoader
-23:35:16.561 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTests-context.xml] does not exist
-23:35:16.561 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTestsContext.groovy] does not exist
-23:35:16.561 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.example.HelloSinkApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
-23:35:16.562 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.example.HelloSinkApplicationTests]: HelloSinkApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-23:35:16.570 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.example.HelloSinkApplicationTests]
-23:35:16.571 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemProperties] PropertySource with lowest search precedence
-23:35:16.571 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemEnvironment] PropertySource with lowest search precedence
-23:35:16.572 [main] DEBUG org.springframework.core.env.StandardEnvironment - Initialized StandardEnvironment with PropertySources [systemProperties,systemEnvironment]
-23:35:16.572 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.example.HelloSinkApplication for test class com.example.HelloSinkApplicationTests
-23:35:16.574 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.example.HelloSinkApplicationTests]: using defaults.
-23:35:16.577 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
-23:35:16.581 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@5e316c74, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@6d2a209c, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@75329a49, org.springframework.test.context.support.DirtiesContextTestExecutionListener@161479c6, org.springframework.test.context.transaction.TransactionalTestExecutionListener@4313f5bc, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@7f010382, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@1e802ef9, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@2b6faea6, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@778d1062, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@670002, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@1f0f1111, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@49c386c8]
-23:35:16.582 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
-23:35:16.582 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
-23:35:16.583 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
-23:35:16.583 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
-23:35:16.590 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@5c909414 testClass = HelloSinkApplicationTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@4b14c583 testClass = HelloSinkApplicationTests, locations = '{}', classes = '{class com.example.HelloSinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.SpringBootTestContextCustomizer@551aa95a, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@6ebc05a6, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@23faf8f2], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]]], class annotated with @DirtiesContext [false] with mode [null].
-23:35:16.591 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
-23:35:16.591 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
-23:35:16.594 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@5c909414 testClass = HelloSinkApplicationTests, testInstance = com.example.HelloSinkApplicationTests@1184ab05, testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@4b14c583 testClass = HelloSinkApplicationTests, locations = '{}', classes = '{class com.example.HelloSinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.SpringBootTestContextCustomizer@551aa95a, org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@6ebc05a6, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@23faf8f2], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]]]].
-23:35:16.626 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemProperties] PropertySource with lowest search precedence
-23:35:16.626 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [systemEnvironment] PropertySource with lowest search precedence
-23:35:16.626 [main] DEBUG org.springframework.core.env.StandardEnvironment - Initialized StandardEnvironment with PropertySources [systemProperties,systemEnvironment]
-23:35:16.627 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=-1}
-23:35:16.627 [main] DEBUG org.springframework.core.env.StandardEnvironment - Adding [Inlined Test Properties] PropertySource with highest search precedence
+[INFO] --- maven-surefire-plugin:2.22.1:test (default-test) @ hello-sink ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.HelloSinkApplicationTests
+02:59:02.137 [main] DEBUG org.springframework.test.context.junit4.SpringJUnit4ClassRunner - SpringJUnit4ClassRunner constructor called with [class com.example.HelloSinkApplicationTests]
+02:59:02.143 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
+02:59:02.149 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
+02:59:02.164 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.example.HelloSinkApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
+02:59:02.175 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.example.HelloSinkApplicationTests], using SpringBootContextLoader
+02:59:02.189 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTests-context.xml] does not exist
+02:59:02.189 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSinkApplicationTests]: class path resource [com/example/HelloSinkApplicationTestsContext.groovy] does not exist
+02:59:02.190 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.example.HelloSinkApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+02:59:02.190 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.example.HelloSinkApplicationTests]: HelloSinkApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+02:59:02.230 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.example.HelloSinkApplicationTests]
+02:59:02.316 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/Users/maki/git/scst/hello-sink/target/classes/com/example/HelloSinkApplication.class]
+02:59:02.317 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.example.HelloSinkApplication for test class com.example.HelloSinkApplicationTests
+02:59:02.389 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.example.HelloSinkApplicationTests]: using defaults.
+02:59:02.390 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener]
+02:59:02.402 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@1d483de4, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@4032d386, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@28d18df5, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@934b6cb, org.springframework.test.context.support.DirtiesContextTestExecutionListener@55cf0d14, org.springframework.test.context.transaction.TransactionalTestExecutionListener@3b74ac8, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@27adc16e, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@b83a9be, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@2609b277, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@1fd14d74, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@563e4951, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@4066c471]
+02:59:02.404 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
+02:59:02.404 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
+02:59:02.405 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
+02:59:02.405 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
+02:59:02.406 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
+02:59:02.406 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
+02:59:02.409 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@5c45d770 testClass = HelloSinkApplicationTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@2ce6c6ec testClass = HelloSinkApplicationTests, locations = '{}', classes = '{class com.example.HelloSinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@568ff82, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5ab9e72c, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@6497b078, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2892dae4], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]], class annotated with @DirtiesContext [false] with mode [null].
+02:59:02.409 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved @ProfileValueSourceConfiguration [null] for test class [com.example.HelloSinkApplicationTests]
+02:59:02.409 [main] DEBUG org.springframework.test.annotation.ProfileValueUtils - Retrieved ProfileValueSource type [class org.springframework.test.annotation.SystemProfileValueSource] for class [com.example.HelloSinkApplicationTests]
+02:59:02.413 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@5c45d770 testClass = HelloSinkApplicationTests, testInstance = com.example.HelloSinkApplicationTests@68d279ec, testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@2ce6c6ec testClass = HelloSinkApplicationTests, locations = '{}', classes = '{class com.example.HelloSinkApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@568ff82, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@5ab9e72c, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@6497b078, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2892dae4], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]]].
+02:59:02.430 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true, server.port=-1}
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -443,53 +400,37 @@ Running com.example.HelloSinkApplicationTests
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::        (v1.4.2.RELEASE)
+ :: Spring Boot ::        (v2.1.2.RELEASE)
 
-2016-12-11 23:35:17.411  INFO 87906 --- [           main] com.example.HelloSinkApplicationTests    : Starting HelloSinkApplicationTests on jpxxmakitm1.corp.emc.com with PID 87906 (started by makit in /Users/makit/scst-ws/hello-sink)
-2016-12-11 23:35:17.411  INFO 87906 --- [           main] com.example.HelloSinkApplicationTests    : No active profile set, falling back to default profiles: default
-2016-12-11 23:35:17.434  INFO 87906 --- [           main] s.c.a.AnnotationConfigApplicationContext : Refreshing org.springframework.context.annotation.AnnotationConfigApplicationContext@36804139: startup date [Sun Dec 11 23:35:17 JST 2016]; root of context hierarchy
-2016-12-11 23:35:18.132  INFO 87906 --- [           main] o.s.b.f.config.PropertiesFactoryBean     : Loading properties file from URL [jar:file:/Users/makit/.m2/repository/org/springframework/integration/spring-integration-core/4.3.5.RELEASE/spring-integration-core-4.3.5.RELEASE.jar!/META-INF/spring.integration.default.properties]
-2016-12-11 23:35:18.137  INFO 87906 --- [           main] o.s.i.config.IntegrationRegistrar        : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2016-12-11 23:35:18.166  INFO 87906 --- [           main] o.s.b.f.s.DefaultListableBeanFactory     : Overriding bean definition for bean 'binderFactory' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.stream.config.BinderFactoryConfiguration; factoryMethodName=binderFactory; initMethodName=null; destroyMethodName=(inferred); defined in org.springframework.cloud.stream.config.BinderFactoryConfiguration] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.cloud.stream.test.binder.TestSupportBinderAutoConfiguration; factoryMethodName=binderFactory; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/cloud/stream/test/binder/TestSupportBinderAutoConfiguration.class]]
-2016-12-11 23:35:18.567  INFO 87906 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2016-12-11 23:35:18.570  INFO 87906 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
-2016-12-11 23:35:18.619  INFO 87906 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration' of type [class org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration$$EnhancerBySpringCGLIB$$e5a09acd] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2016-12-11 23:35:18.671  INFO 87906 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.stream.config.ChannelBindingServiceConfiguration$PostProcessorConfiguration' of type [class org.springframework.cloud.stream.config.ChannelBindingServiceConfiguration$PostProcessorConfiguration$$EnhancerBySpringCGLIB$$16ff752b] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2016-12-11 23:35:18.812  INFO 87906 --- [           main] o.s.b.f.config.PropertiesFactoryBean     : Loading properties file from URL [jar:file:/Users/makit/.m2/repository/org/springframework/integration/spring-integration-core/4.3.5.RELEASE/spring-integration-core-4.3.5.RELEASE.jar!/META-INF/spring.integration.default.properties]
-2016-12-11 23:35:18.813  INFO 87906 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationGlobalProperties' of type [class org.springframework.beans.factory.config.PropertiesFactoryBean] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2016-12-11 23:35:18.814  INFO 87906 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationGlobalProperties' of type [class java.util.Properties] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2016-12-11 23:35:19.376  INFO 87906 --- [           main] o.s.integration.channel.DirectChannel    : Channel 'application:-1.input' has 1 subscriber(s).
-2016-12-11 23:35:19.491  INFO 87906 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService  'taskScheduler'
-2016-12-11 23:35:20.279  INFO 87906 --- [           main] o.s.i.codec.kryo.CompositeKryoRegistrar  : configured Kryo registration [40, java.io.File] with serializer org.springframework.integration.codec.kryo.FileSerializer
-2016-12-11 23:35:20.406  INFO 87906 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase -2147482648
-2016-12-11 23:35:20.408  INFO 87906 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
-2016-12-11 23:35:20.409  INFO 87906 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
-2016-12-11 23:35:20.409  INFO 87906 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application:-1.errorChannel' has 1 subscriber(s).
-2016-12-11 23:35:20.409  INFO 87906 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started _org.springframework.integration.errorLogger
-2016-12-11 23:35:20.409  INFO 87906 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147482647
-2016-12-11 23:35:20.425  INFO 87906 --- [           main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147483647
-2016-12-11 23:35:20.445  INFO 87906 --- [           main] com.example.HelloSinkApplicationTests    : Started HelloSinkApplicationTests in 3.815 seconds (JVM running for 4.445)
+2019-01-28 02:59:02.702  INFO 30050 --- [           main] com.example.HelloSinkApplicationTests    : Starting HelloSinkApplicationTests on makinoMacBook-puro.local with PID 30050 (started by maki in /Users/maki/git/scst/hello-sink)
+2019-01-28 02:59:02.704  INFO 30050 --- [           main] com.example.HelloSinkApplicationTests    : No active profile set, falling back to default profiles: default
+2019-01-28 02:59:03.714  INFO 30050 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2019-01-28 02:59:03.718  INFO 30050 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'taskScheduler' has been explicitly defined. Therefore, a default ThreadPoolTaskScheduler will be created.
+2019-01-28 02:59:03.723  INFO 30050 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2019-01-28 02:59:03.771  INFO 30050 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration' of type [org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration$$EnhancerBySpringCGLIB$$6f64fec0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-01-28 02:59:03.819  INFO 30050 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-01-28 02:59:03.854  INFO 30050 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration$$EnhancerBySpringCGLIB$$13eafbc1] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-01-28 02:59:04.931  INFO 30050 --- [           main] o.s.s.c.ThreadPoolTaskScheduler          : Initializing ExecutorService 'taskScheduler'
+2019-01-28 02:59:05.412  INFO 30050 --- [           main] o.s.c.s.m.DirectWithAttributesChannel    : Channel 'application.input' has 1 subscriber(s).
+2019-01-28 02:59:05.425  INFO 30050 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2019-01-28 02:59:05.425  INFO 30050 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 1 subscriber(s).
+2019-01-28 02:59:05.425  INFO 30050 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started _org.springframework.integration.errorLogger
+2019-01-28 02:59:05.472  INFO 30050 --- [           main] com.example.HelloSinkApplicationTests    : Started HelloSinkApplicationTests in 3.04 seconds (JVM running for 3.796)
 Received Hello
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.95 sec - in com.example.HelloSinkApplicationTests
-2016-12-11 23:35:20.525  INFO 87906 --- [       Thread-1] s.c.a.AnnotationConfigApplicationContext : Closing org.springframework.context.annotation.AnnotationConfigApplicationContext@36804139: startup date [Sun Dec 11 23:35:17 JST 2016]; root of context hierarchy
-2016-12-11 23:35:20.529  INFO 87906 --- [       Thread-1] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147483647
-2016-12-11 23:35:20.529  INFO 87906 --- [       Thread-1] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 2147482647
-2016-12-11 23:35:20.530  INFO 87906 --- [       Thread-1] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase 0
-2016-12-11 23:35:20.531  INFO 87906 --- [       Thread-1] o.s.i.endpoint.EventDrivenConsumer       : Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
-2016-12-11 23:35:20.532  INFO 87906 --- [       Thread-1] o.s.i.channel.PublishSubscribeChannel    : Channel 'application:-1.errorChannel' has 0 subscriber(s).
-2016-12-11 23:35:20.532  INFO 87906 --- [       Thread-1] o.s.i.endpoint.EventDrivenConsumer       : stopped _org.springframework.integration.errorLogger
-2016-12-11 23:35:20.532  INFO 87906 --- [       Thread-1] o.s.c.support.DefaultLifecycleProcessor  : Stopping beans in phase -2147482648
-2016-12-11 23:35:20.535  INFO 87906 --- [       Thread-1] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'taskScheduler'
-
-Results :
-
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
-
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.822 s - in com.example.HelloSinkApplicationTests
+2019-01-28 02:59:05.859  INFO 30050 --- [       Thread-3] o.s.i.endpoint.EventDrivenConsumer       : Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2019-01-28 02:59:05.860  INFO 30050 --- [       Thread-3] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 0 subscriber(s).
+2019-01-28 02:59:05.860  INFO 30050 --- [       Thread-3] o.s.i.endpoint.EventDrivenConsumer       : stopped _org.springframework.integration.errorLogger
+2019-01-28 02:59:05.862  INFO 30050 --- [       Thread-3] o.s.s.c.ThreadPoolTaskScheduler          : Shutting down ExecutorService 'taskScheduler'
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 6.554 s
-[INFO] Finished at: 2016-12-11T23:35:20+09:00
-[INFO] Final Memory: 18M/309M
+[INFO] Total time: 6.504 s
+[INFO] Finished at: 2019-01-28T02:59:06+09:00
 [INFO] ------------------------------------------------------------------------
 ```
