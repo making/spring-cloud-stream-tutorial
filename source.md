@@ -461,15 +461,12 @@ public class HelloSourceApplicationTests {
 次のようにテストが通ればOKです。
 
 ``` console
- $ ./mvnw clean test
+ $ ./mvnw test
 [INFO] Scanning for projects...
 [INFO] 
 [INFO] ----------------------< com.example:hello-source >----------------------
 [INFO] Building demo 0.0.1-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
-[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ hello-source ---
-[INFO] Deleting /Users/maki/git/scst/hello-source/target
 [INFO] 
 [INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ hello-source ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
