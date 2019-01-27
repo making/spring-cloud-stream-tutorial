@@ -144,14 +144,13 @@ $ curl http://localhost:8085/
 ``` yml
 applications:
 - name: tweet-viewer-tmaki
-  memory: 512m
-  buildpack: https://github.com/cloudfoundry/java-buildpack#v3.19
+  memory: 768m
   path: target/tweet-viewer-0.0.1-SNAPSHOT.jar
   services:
   - rabbitmq-binder
 ```
 
-`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。また、商用版Pivotal Cloud Foundryを使用する場合は`java_buildpack`の代わりに`java_buildpack_offline`を使用してください。
+`tmaki`の部分は一意になるように自分のアカウント名などに置換してください。
 
 
 デプロイします。
