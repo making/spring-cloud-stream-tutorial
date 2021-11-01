@@ -32,12 +32,6 @@ spring.rabbitmq.password=WlHWkjO2lWl51zG_CKwNlFaRrXL6Wt3V
 spring.rabbitmq.virtual-host=gapchcgl
 ```
 
-また、Cloud FoundryのUser Provided Serviceを作成したい場合は、次のコマンドを実行してください。
-
-```
-cf create-user-provided-service rabbitmq-binder -p '{"uri":"amqp://gapchcgl:WlHWkjO2lWl51zG_CKwNlFaRrXL6Wt3V@cat.rmq.cloudamqp.com/gapchcgl"}'
-```
-
 インスタンス一覧画面から"RabbitMQ Manager"をクリックすると管理コンソールにアクセスできます。
 
 ![image](https://qiita-image-store.s3.amazonaws.com/0/1852/67cb765b-f514-67a9-dc57-360c1697ca2b.png)
