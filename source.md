@@ -15,6 +15,7 @@ curl https://start.spring.io/starter.tgz \
        -d baseDir=hello-source \
        -d packageName=com.example \
        -d dependencies=web,actuator,cloud-stream,amqp \
+       -d type=maven-project \
        -d applicationName=HelloSourceApplication | tar -xzvf -
 ```
 
@@ -57,7 +58,7 @@ public class HelloSourceApplication {
 		this.streamBridge = streamBridge;
 	}
 
-	@PostMapping
+	@PostMapping(path = "/")
 	public void tweet(@RequestBody Tweet tweet) {
 		this.streamBridge.send("output", tweet);
 	}
@@ -66,8 +67,7 @@ public class HelloSourceApplication {
 		SpringApplication.run(HelloSourceApplication.class, args);
 	}
 
-	public static class Tweet {
-		public String text;
+	record Tweet(String text) {
 	}
 }
 ```
@@ -231,13 +231,12 @@ class HelloSourceApplicationTests {
 
 	@Test
 	void contextLoads() {
-		final Tweet tweet = new Tweet();
-		tweet.text = "hello!";
+		final Tweet tweet = new Tweet("hello!");
 		this.app.tweet(tweet);
 		final Message<byte[]> message = this.destination.receive(3, "hello");
 		final Tweet output = (Tweet) this.messageConverter.fromMessage(message, Tweet.class);
 		assertThat(output).isNotNull();
-		assertThat(output.text).isEqualTo("hello!");
+		assertThat(output.text()).isEqualTo("hello!");
 	}
 
 }
@@ -256,27 +255,23 @@ $ ./mvnw clean test
 [INFO] Building demo 0.0.1-SNAPSHOT
 [INFO] --------------------------------[ jar ]---------------------------------
 [INFO] 
-[INFO] --- maven-clean-plugin:3.1.0:clean (default-clean) @ hello-source ---
-[INFO] Deleting /Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source/target
+[INFO] --- maven-clean-plugin:3.2.0:clean (default-clean) @ hello-source ---
+[INFO] Deleting /Users/toshiaki/git/hello-source/target
 [INFO] 
-[INFO] --- maven-resources-plugin:3.2.0:resources (default-resources) @ hello-source ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Using 'UTF-8' encoding to copy filtered properties files.
-[INFO] Copying 1 resource
-[INFO] Copying 0 resource
+[INFO] --- maven-resources-plugin:3.3.1:resources (default-resources) @ hello-source ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 0 resource from src/main/resources to target/classes
 [INFO] 
-[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ hello-source ---
+[INFO] --- maven-compiler-plugin:3.10.1:compile (default-compile) @ hello-source ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 1 source file to /Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source/target/classes
+[INFO] Compiling 1 source file to /Users/toshiaki/git/hello-source/target/classes
 [INFO] 
-[INFO] --- maven-resources-plugin:3.2.0:testResources (default-testResources) @ hello-source ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Using 'UTF-8' encoding to copy filtered properties files.
-[INFO] skip non existing resourceDirectory /Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source/src/test/resources
+[INFO] --- maven-resources-plugin:3.3.1:testResources (default-testResources) @ hello-source ---
+[INFO] skip non existing resourceDirectory /Users/toshiaki/git/hello-source/src/test/resources
 [INFO] 
-[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ hello-source ---
+[INFO] --- maven-compiler-plugin:3.10.1:testCompile (default-testCompile) @ hello-source ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 1 source file to /Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source/target/test-classes
+[INFO] Compiling 1 source file to /Users/toshiaki/git/hello-source/target/test-classes
 [INFO] 
 [INFO] --- maven-surefire-plugin:2.22.2:test (default-test) @ hello-source ---
 [INFO] 
@@ -284,23 +279,15 @@ $ ./mvnw clean test
 [INFO]  T E S T S
 [INFO] -------------------------------------------------------
 [INFO] Running com.example.HelloSourceApplicationTests
-01:55:41.380 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating CacheAwareContextLoaderDelegate from class [org.springframework.test.context.cache.DefaultCacheAwareContextLoaderDelegate]
-01:55:41.389 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating BootstrapContext using constructor [public org.springframework.test.context.support.DefaultBootstrapContext(java.lang.Class,org.springframework.test.context.CacheAwareContextLoaderDelegate)]
-01:55:41.423 [main] DEBUG org.springframework.test.context.BootstrapUtils - Instantiating TestContextBootstrapper for test class [com.example.HelloSourceApplicationTests] from class [org.springframework.boot.test.context.SpringBootTestContextBootstrapper]
-01:55:41.432 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Neither @ContextConfiguration nor @ContextHierarchy found for test class [com.example.HelloSourceApplicationTests], using SpringBootContextLoader
-01:55:41.435 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSourceApplicationTests]: class path resource [com/example/HelloSourceApplicationTests-context.xml] does not exist
-01:55:41.436 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader - Did not detect default resource location for test class [com.example.HelloSourceApplicationTests]: class path resource [com/example/HelloSourceApplicationTestsContext.groovy] does not exist
-01:55:41.436 [main] INFO org.springframework.test.context.support.AbstractContextLoader - Could not detect default resource locations for test class [com.example.HelloSourceApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
-01:55:41.436 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.example.HelloSourceApplicationTests]: HelloSourceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-01:55:41.478 [main] DEBUG org.springframework.test.context.support.ActiveProfilesUtils - Could not find an 'annotation declaring class' for annotation type [org.springframework.test.context.ActiveProfiles] and class [com.example.HelloSourceApplicationTests]
-01:55:41.530 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider - Identified candidate component class: file [/Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source/target/classes/com/example/HelloSourceApplication.class]
-01:55:41.531 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.example.HelloSourceApplication for test class com.example.HelloSourceApplicationTests
-01:55:41.601 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper - @TestExecutionListeners is not present for class [com.example.HelloSourceApplicationTests]: using defaults.
-01:55:41.601 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Loaded default TestExecutionListener class names from location [META-INF/spring.factories]: [org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener, org.springframework.test.context.web.ServletTestExecutionListener, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener, org.springframework.test.context.event.ApplicationEventsTestExecutionListener, org.springframework.test.context.support.DependencyInjectionTestExecutionListener, org.springframework.test.context.support.DirtiesContextTestExecutionListener, org.springframework.test.context.transaction.TransactionalTestExecutionListener, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener, org.springframework.test.context.event.EventPublishingTestExecutionListener]
-01:55:41.614 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Using TestExecutionListeners: [org.springframework.test.context.web.ServletTestExecutionListener@2d6c53fc, org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener@25f4878b, org.springframework.test.context.event.ApplicationEventsTestExecutionListener@4e423aa2, org.springframework.boot.test.mock.mockito.MockitoTestExecutionListener@7fbdb894, org.springframework.boot.test.autoconfigure.SpringBootDependencyInjectionTestExecutionListener@3081f72c, org.springframework.test.context.support.DirtiesContextTestExecutionListener@3148f668, org.springframework.test.context.transaction.TransactionalTestExecutionListener@6e005dc9, org.springframework.test.context.jdbc.SqlScriptsTestExecutionListener@7ceb3185, org.springframework.test.context.event.EventPublishingTestExecutionListener@436c81a3, org.springframework.boot.test.mock.mockito.ResetMocksTestExecutionListener@3561c410, org.springframework.boot.test.autoconfigure.restdocs.RestDocsTestExecutionListener@59e32960, org.springframework.boot.test.autoconfigure.web.client.MockRestServiceServerResetTestExecutionListener@7c214cc0, org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrintOnlyOnFailureTestExecutionListener@5b67bb7e, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverTestExecutionListener@609db546, org.springframework.boot.test.autoconfigure.webservices.client.MockWebServiceServerTestExecutionListener@20f5281c]
-01:55:41.618 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener - Before test class: context [DefaultTestContext@8e50104 testClass = HelloSourceApplicationTests, testInstance = [null], testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@37e4d7bb testClass = HelloSourceApplicationTests, locations = '{}', classes = '{class com.example.HelloSourceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[[ImportsContextCustomizer@6f7923a5 key = [org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@346d61be, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3d1cfad4, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@272ed83b, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@5ace1ed4, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2fd1433e, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@4bbfb90a], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map[[empty]]], class annotated with @DirtiesContext [false] with mode [null].
-01:55:41.636 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener - Performing dependency injection for test context [[DefaultTestContext@8e50104 testClass = HelloSourceApplicationTests, testInstance = com.example.HelloSourceApplicationTests@39ac0c0a, testMethod = [null], testException = [null], mergedContextConfiguration = [MergedContextConfiguration@37e4d7bb testClass = HelloSourceApplicationTests, locations = '{}', classes = '{class com.example.HelloSourceApplication}', contextInitializerClasses = '[]', activeProfiles = '{}', propertySourceLocations = '{}', propertySourceProperties = '{org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}', contextCustomizers = set[[ImportsContextCustomizer@6f7923a5 key = [org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration]], org.springframework.boot.test.context.filter.ExcludeFilterContextCustomizer@346d61be, org.springframework.boot.test.json.DuplicateJsonObjectContextCustomizerFactory$DuplicateJsonObjectContextCustomizer@3d1cfad4, org.springframework.boot.test.mock.mockito.MockitoContextCustomizer@0, org.springframework.boot.test.web.client.TestRestTemplateContextCustomizer@272ed83b, org.springframework.boot.test.autoconfigure.actuate.metrics.MetricsExportContextCustomizerFactory$DisableMetricExportContextCustomizer@5ace1ed4, org.springframework.boot.test.autoconfigure.properties.PropertyMappingContextCustomizer@0, org.springframework.boot.test.autoconfigure.web.servlet.WebDriverContextCustomizerFactory$Customizer@2fd1433e, org.springframework.boot.test.context.SpringBootTestArgs@1, org.springframework.boot.test.context.SpringBootTestWebEnvironment@4bbfb90a], contextLoader = 'org.springframework.boot.test.context.SpringBootContextLoader', parent = [null]], attributes = map['org.springframework.test.context.event.ApplicationEventsTestExecutionListener.recordApplicationEvents' -> false]]].
-01:55:41.654 [main] DEBUG org.springframework.test.context.support.TestPropertySourceUtils - Adding inlined properties to environment: {spring.jmx.enabled=false, org.springframework.boot.test.context.SpringBootTestContextBootstrapper=true}
+20:28:41.594 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Neither @ContextConfiguration nor @ContextHierarchy found for test class [HelloSourceApplicationTests]: using SpringBootContextLoader
+20:28:41.599 [main] DEBUG org.springframework.test.context.support.AbstractContextLoader -- Could not detect default resource locations for test class [com.example.HelloSourceApplicationTests]: no resource found for suffixes {-context.xml, Context.groovy}.
+20:28:41.601 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.example.HelloSourceApplicationTests]: HelloSourceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+20:28:41.640 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Using ContextCustomizers for test class [HelloSourceApplicationTests]: [ImportsContextCustomizer, ExcludeFilterContextCustomizer, DuplicateJsonObjectContextCustomizer, MockitoContextCustomizer, TestRestTemplateContextCustomizer, WebTestClientContextCustomizer, DisableObservabilityContextCustomizer, PropertyMappingContextCustomizer, Customizer]
+20:28:41.751 [main] DEBUG org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider -- Identified candidate component class: file [/Users/toshiaki/git/hello-source/target/classes/com/example/HelloSourceApplication.class]
+20:28:41.753 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.example.HelloSourceApplication for test class com.example.HelloSourceApplicationTests
+20:28:41.908 [main] DEBUG org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Using TestExecutionListeners for test class [HelloSourceApplicationTests]: [ServletTestExecutionListener, DirtiesContextBeforeModesTestExecutionListener, ApplicationEventsTestExecutionListener, MockitoTestExecutionListener, DependencyInjectionTestExecutionListener, DirtiesContextTestExecutionListener, TransactionalTestExecutionListener, SqlScriptsTestExecutionListener, EventPublishingTestExecutionListener, ResetMocksTestExecutionListener, RestDocsTestExecutionListener, MockRestServiceServerResetTestExecutionListener, MockMvcPrintOnlyOnFailureTestExecutionListener, WebDriverTestExecutionListener, MockWebServiceServerTestExecutionListener]
+20:28:41.910 [main] DEBUG org.springframework.test.context.support.AbstractDirtiesContextTestExecutionListener -- Before test class: class [HelloSourceApplicationTests], class annotated with @DirtiesContext [false] with mode [null]
+20:28:41.926 [main] DEBUG org.springframework.test.context.support.DependencyInjectionTestExecutionListener -- Performing dependency injection for test class com.example.HelloSourceApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -308,30 +295,22 @@ $ ./mvnw clean test
  \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
   '  |____| .__|_| |_|_| |_\__, | / / / /
  =========|_|==============|___/=/_/_/_/
- :: Spring Boot ::                (v2.5.6)
+ :: Spring Boot ::                (v3.0.6)
 
-2021-11-02 01:55:41.864  INFO 36569 --- [           main] com.example.HelloSourceApplicationTests  : Starting HelloSourceApplicationTests using Java 17.0.1 on makinoMacBook-Pro.local with PID 36569 (started by toshiaki in /Users/toshiaki/git/spring-cloud-stream-tutorial/tmp/hello-source)
-2021-11-02 01:55:41.865  INFO 36569 --- [           main] com.example.HelloSourceApplicationTests  : No active profile set, falling back to default profiles: default
-2021-11-02 01:55:42.553  INFO 36569 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
-2021-11-02 01:55:42.561  INFO 36569 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
-2021-11-02 01:55:42.639  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationChannelResolver' of type [org.springframework.integration.support.channel.BeanFactoryChannelResolver] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:42.644  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'integrationDisposableAutoCreatedBeans' of type [org.springframework.integration.config.annotation.Disposables] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:42.664  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:42.670  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'bindersHealthContributor' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration$BindersHealthContributor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:42.672  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'bindersHealthIndicatorListener' of type [org.springframework.cloud.stream.config.BindersHealthIndicatorAutoConfiguration$BindersHealthIndicatorListener] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:42.684  INFO 36569 --- [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.integration.config.IntegrationManagementConfiguration' of type [org.springframework.integration.config.IntegrationManagementConfiguration] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
-2021-11-02 01:55:43.390  INFO 36569 --- [           main] c.f.c.c.BeanFactoryAwareFunctionRegistry : Can't determine default function definition. Please use 'spring.cloud.function.definition' property to explicitly define it.
-2021-11-02 01:55:43.549  INFO 36569 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
-2021-11-02 01:55:43.550  INFO 36569 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 1 subscriber(s).
-2021-11-02 01:55:43.550  INFO 36569 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started bean '_org.springframework.integration.errorLogger'
-2021-11-02 01:55:43.563  INFO 36569 --- [           main] com.example.HelloSourceApplicationTests  : Started HelloSourceApplicationTests in 1.906 seconds (JVM running for 2.675)
-2021-11-02 01:55:43.872  INFO 36569 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'hello.destination' has 1 subscriber(s).
-2021-11-02 01:55:43.874  INFO 36569 --- [           main] o.s.c.s.m.DirectWithAttributesChannel    : Channel 'unknown.channel.name' has 1 subscriber(s).
-{id=d9bbf7bb-55b9-ea74-d77d-9d6c60009d04, contentType=application/json, target-protocol=streamBridge, timestamp=1635785743906}
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.641 s - in com.example.HelloSourceApplicationTests
-2021-11-02 01:55:43.968  INFO 36569 --- [ionShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
-2021-11-02 01:55:43.968  INFO 36569 --- [ionShutdownHook] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 0 subscriber(s).
-2021-11-02 01:55:43.969  INFO 36569 --- [ionShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : stopped bean '_org.springframework.integration.errorLogger'
+2023-05-16T20:28:42.247+09:00  INFO 6684 --- [           main] c.example.HelloSourceApplicationTests    : Starting HelloSourceApplicationTests using Java 17.0.5 with PID 6684 (started by toshiaki in /Users/toshiaki/git/hello-source)
+2023-05-16T20:28:42.250+09:00  INFO 6684 --- [           main] c.example.HelloSourceApplicationTests    : No active profile set, falling back to 1 default profile: "default"
+2023-05-16T20:28:43.329+09:00  INFO 6684 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'errorChannel' has been explicitly defined. Therefore, a default PublishSubscribeChannel will be created.
+2023-05-16T20:28:43.338+09:00  INFO 6684 --- [           main] faultConfiguringBeanFactoryPostProcessor : No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2023-05-16T20:28:44.593+09:00  INFO 6684 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : Adding {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2023-05-16T20:28:44.594+09:00  INFO 6684 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 1 subscriber(s).
+2023-05-16T20:28:44.595+09:00  INFO 6684 --- [           main] o.s.i.endpoint.EventDrivenConsumer       : started bean '_org.springframework.integration.errorLogger'
+2023-05-16T20:28:44.626+09:00  INFO 6684 --- [           main] c.example.HelloSourceApplicationTests    : Started HelloSourceApplicationTests in 2.673 seconds (process running for 4.041)
+2023-05-16T20:28:45.205+09:00  INFO 6684 --- [           main] o.s.i.channel.PublishSubscribeChannel    : Channel 'hello.destination' has 1 subscriber(s).
+2023-05-16T20:28:45.206+09:00  INFO 6684 --- [           main] o.s.c.s.m.DirectWithAttributesChannel    : Channel 'unknown.channel.name' has 1 subscriber(s).
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.97 s - in com.example.HelloSourceApplicationTests
+2023-05-16T20:28:45.391+09:00  INFO 6684 --- [ionShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : Removing {logging-channel-adapter:_org.springframework.integration.errorLogger} as a subscriber to the 'errorChannel' channel
+2023-05-16T20:28:45.391+09:00  INFO 6684 --- [ionShutdownHook] o.s.i.channel.PublishSubscribeChannel    : Channel 'application.errorChannel' has 0 subscriber(s).
+2023-05-16T20:28:45.392+09:00  INFO 6684 --- [ionShutdownHook] o.s.i.endpoint.EventDrivenConsumer       : stopped bean '_org.springframework.integration.errorLogger'
 [INFO] 
 [INFO] Results:
 [INFO] 
@@ -340,7 +319,7 @@ $ ./mvnw clean test
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  5.944 s
-[INFO] Finished at: 2021-11-02T01:55:44+09:00
+[INFO] Total time:  8.092 s
+[INFO] Finished at: 2023-05-16T20:28:45+09:00
 [INFO] ------------------------------------------------------------------------
 ```
