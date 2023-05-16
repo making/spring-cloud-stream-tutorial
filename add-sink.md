@@ -13,6 +13,7 @@ curl https://start.spring.io/starter.tgz \
        -d baseDir=tweet-viewer \
        -d packageName=com.example \
        -d dependencies=web,actuator,cloud-stream,amqp \
+       -d type=maven-project \
        -d applicationName=TweetViewerApplication | tar -xzvf -
 ```
 
@@ -51,8 +52,7 @@ public class TweetViewerApplication {
 		SpringApplication.run(TweetViewerApplication.class, args);
 	}
 
-	public static class Tweet {
-		public String text;
+	record Tweet(String text) {
 	}
 }
 ```
