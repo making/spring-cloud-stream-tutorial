@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TweetViewerApplication {
 	private final List<Tweet> tweets = new CopyOnWriteArrayList<>();
 
-	@GetMapping
+	@GetMapping(path = "/")
 	public List<Tweet> viewTweets() {
 		return this.tweets;
 	}
