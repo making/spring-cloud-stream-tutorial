@@ -45,7 +45,7 @@ public class TweetViewerApplication {
 
 	@Bean
 	public Consumer<Tweet> tweetCollector() {
-		return e -> this.tweets.add(e);
+		return tweet -> this.tweets.add(tweet);
 	}
 
 	public static void main(String[] args) {
