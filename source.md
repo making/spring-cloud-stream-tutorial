@@ -32,9 +32,7 @@ curl https://start.spring.io/starter.tgz \
 
 ### Sourceの実装
 
-Spring Cloud Streamが作成する`MessageChannel`に`Message`を送信するSourceクラスを作成します。ここではHTTPでJSONを受け付けて、`Message`インスタンスを作成し、`Source`インスタンスを利用して`Message`を送信しています。
-
-`@EnableBinding(Source.class)`を指定することにより、`Source`に対応する`MessageChannel`がバインドされ、`Source`インスタンスがインジェクション可能になります。
+Spring Cloud Streamが作成する`MessageChannel`にTweetを送信するSourceクラスを作成します。ここではHTTPでJSONを受け付けて、`Tweet`インスタンスを作成し、`StreamBridge`を利用して`Tweet`を送信しています。
 
 `src/main/java/com/example/HelloSourceApplication.java`を次のように記述してください。
 

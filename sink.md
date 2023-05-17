@@ -30,9 +30,9 @@ curl https://start.spring.io/starter.tgz \
 
 
 
-Spring Cloud Streamが作成する`MessageChannel`から`Message`を受信するSinkクラスを作成します。
+Spring Cloud Streamが作成する`MessageChannel`からTweetを受信するSinkクラスを作成します。
 
-`@EnableBinding(Sink.class)`を指定することにより、`Sink`に対応する`MessageChannel`がバインドされ、`Sink`インスタンスがインジェクション可能になります。今回は`Sink`インスタンスは使用しません。その代わりにメッセージを処理するメソッドに`@StreamListener`アノテーションを付与し、channel名を指定します。ここではchennel名に`Sink.INPUT`(`input`)を使用します。
+`Tweet`を受信する処理は`java.util.function.Consumer`で実装できます。
 
 `src/main/java/com/example/HelloSinkApplication.java`を次のように記述してください。
 
