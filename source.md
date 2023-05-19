@@ -122,21 +122,21 @@ docker run -p 15672:15672 -p 5672:5672 rabbitmq:3-management
 java -jar target/hello-source-0.0.1-SNAPSHOT.jar
 ```
 
-RabbitMQが別のサーバー上にいる場合は次のように`spring.rabbitmq.addresses`を指定してください。
+RabbitMQが別のサーバー上にいる場合は次のように`spring.rabbitmq.host`を指定してください。
 
 ```
-java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192.168.99.100:5672
+java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.host=192.168.99.100
 ```
 
 ユーザー名、パスワードが必要な場合は`spring.rabbitmq.username`、`spring.rabbitmq.password`を指定してください。
 
 ```
-java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192.168.99.100:5672 --spring.rabbitmq.username=user --spring.rabbitmq.password=pass
+java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.host=192.168.99.100 --spring.rabbitmq.username=user --spring.rabbitmq.password=pass
 ```
 
 Virtual Hostを設定している場合は`spring.rabbitmq.virtual-host`を指定してください。
 ```
-java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192.168.99.100:5672 --spring.rabbitmq.username=user --spring.rabbitmq.password=pass --spring.rabbitmq.virtual-host=/
+java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.host=192.168.99.100 --spring.rabbitmq.username=user --spring.rabbitmq.password=pass --spring.rabbitmq.virtual-host=/
 ```
 
 
@@ -145,7 +145,7 @@ java -jar target/hello-source-0.0.1-SNAPSHOT.jar --spring.rabbitmq.addresses=192
 > RabbitMQの接続情報は起動時に指定するだけでなく、`application.properties`に設定しておくこともできます。この場合は再度jarファイルをビルドしてください。
 > 
 > ``` properties
-> spring.rabbitmq.addresses=192.168.99.100:5672
+> spring.rabbitmq.host=192.168.99.100
 > spring.rabbitmq.username=user
 > spring.rabbitmq.password=pass
 > spring.rabbitmq.virtual-host=/ # if needed
